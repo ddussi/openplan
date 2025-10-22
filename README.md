@@ -1,135 +1,145 @@
-# Turborepo starter
+# OpenPlan Frontend Assignment
 
-This Turborepo starter is maintained by the Turborepo core team.
+## 프로젝트 소개
 
-## Using this example
+사진 정보를 조회하고 표시하는 웹 애플리케이션입니다.  
+Turborepo 모노레포 구조로 확장 가능하게 설계했습니다.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## 기술 스택
+
+- **Framework**: Next.js 15 (App Router), React 19
+- **스타일**: Tailwind CSS
+- **상태관리**: Zustand (전역상태), TanStack Query (서버상태)
+- **모노레포**: Turborepo + pnpm
+- **문서화**: Storybook
+- **타입**: TypeScript (strict mode)
+
+---
+
+## 시작하기
+
+```bash
+# 설치
+pnpm install
+
+# 실행 (localhost:3000)
+pnpm dev
+
+# Storybook (localhost:6006)
+pnpm dev --filter=storybook
+
+# 빌드
+pnpm build
 ```
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## 프로젝트 구조
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+openplan/
+├── apps/
+│   ├── web/                    # 웹 애플리케이션
+│   │   ├── app/                # 페이지 (/, /result, not-found)
+│   │   └── src/
+│   │       ├── components/     # UI 컴포넌트
+│   │       └── containers/     # 페이지 로직
+│   └── storybook/              # 컴포넌트 문서
+│
+└── packages/
+    ├── ui/                     # 공통 UI (Button)
+    └── shared/                 # 공통 로직
+        ├── stores/             # Zustand 스토어
+        ├── services/           # API 호출
+        └── hooks/              # 커스텀 훅
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+## 주요 기능
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+### 1. 사진 조회
+- 버튼 클릭으로 사진 정보 가져오기
+- 1초 쓰로틀 적용 (중복 요청 방지)
+- 로딩 중 스피너 표시
 
-### Develop
+### 2. 상태 유지
+- 새로고침해도 데이터 유지 (localStorage)
+- Zustand로 전역 상태 관리
 
-To develop all apps and packages, run the following command:
+### 3. 페이지 이동
+- 조회 후 자동으로 결과 페이지 이동
+- 조회 안했으면 메인 페이지로 돌아가기
 
-```
-cd my-turborepo
+### 4. 반응형
+- 모바일, 태블릿, 데스크톱 지원
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+---
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+## 설계 포인트
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### 1. 컴포넌트 분리
+- **Container**: 로직 처리 (API 호출, 상태 관리)
+- **Presentation**: UI만 담당 (데이터 받아서 표시)
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+예시:
+```typescript
+// Container - 로직
+function HomeContainer() {
+  const { setPhoto } = usePhotoStore();
+  const handleClick = () => { /* API 호출 */ };
+  return <div onClick={handleClick}>...</div>;
+}
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+// Presentation - UI
+function PhotoInfo({ photo }) {
+  return <div>{photo.id}</div>;
+}
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### 2. 상태 관리 전략
+- **Zustand**: 사용자가 본 사진 데이터 저장 (전역)
+- **TanStack Query**: API 호출 결과 캐싱 (서버)
+- **localStorage**: 새로고침해도 데이터 유지
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+### 3. 모노레포 구조 이유
+- 공통 UI 컴포넌트 재사용 (`packages/ui`)
+- 공통 로직 재사용 (`packages/shared`)
+- 여러 앱을 한 번에 관리 가능
 
+### 4. 최적화
+- Throttle로 중복 API 요청 방지
+- TanStack Query로 불필요한 재호출 방지
+- Skeleton으로 로딩 중 깜빡임 방지
+
+---
+
+## 테스트 방법
+
+### 기본 동작 확인
+1. 메인 페이지에서 "다음" 버튼 클릭
+2. 로딩 표시 확인
+3. 결과 페이지로 자동 이동
+4. 사진 정보 (ID, 작가, 크기 등) 표시 확인
+5. "이전" 버튼으로 메인 이동
+6. 새로고침해도 데이터 유지되는지 확인
+
+### Storybook 확인
+```bash
+pnpm dev --filter=storybook
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+Button 컴포넌트의 다양한 스타일 확인
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+---
 
-## Useful Links
+## 기술 선택 이유
 
-Learn more about the power of Turborepo:
+### Tailwind CSS
+- 빠른 스타일링
+- 번들 사이즈 작음
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+### Next.js App Router
+- 최신 React 패턴
+- 파일 기반 라우팅
