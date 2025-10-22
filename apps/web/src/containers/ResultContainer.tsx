@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { usePhotoStore } from '@repo/shared';
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
@@ -65,10 +66,13 @@ export function ResultContainer() {
             {isLoading ? (
               <Skeleton className="w-full aspect-[16/10] rounded-3xl" />
             ) : (
-              <img
+              <Image
                 src={photo.download_url}
                 alt={`Photo by ${photo.author}`}
+                width={photo.width}
+                height={photo.height}
                 className="w-full h-auto rounded-3xl"
+                priority
               />
             )}
           </div>
