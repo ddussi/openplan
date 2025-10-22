@@ -1,0 +1,92 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { usePhotoStore, usePhotoQuery, useThrottle } from '@repo/shared';
+import { useState, useEffect } from 'react';
+import { Header } from '@/components/Header';
+
+export function HomeContainer() {
+  const router = useRouter();
+  const { setPhoto, hasViewed, photo } = usePhotoStore();
+  const [isClicked, setIsClicked] = useState(false);
+  const { data, refetch, isFetching } = usePhotoQuery();
+
+  // 이미 조회 이력이 있고 데이터가 있으면 자동으로 /result로 이동
+  useEffect(() => {
+    if (hasViewed && photo && !isClicked) {
+      router.push('/result');
+    }
+  }, [hasViewed, photo, isClicked, router]);
+
+  const handleClick = useThrottle(async () => {
+    setIsClicked(true);
+
+    const result = await refetch();
+
+    if (result.data) {
+      setPhoto(result.data);
+      setTimeout(() => {
+        router.push('/result');
+      }, 300);
+    }
+  }, 1000);
+
+  const isLoading = isFetching || isClicked;
+
+  return (
+    <main className="min-h-screen bg-[#FAFAFA]">
+      <Header name="이마루한" variant="light" />
+
+      <div className="flex flex-col justify-between items-start min-h-[calc(100vh-52px)]">
+        <div className="flex-1 flex items-center justify-center w-full px-[10px]">
+          <h2 className="text-[28px] lg:text-[32px] font-semibold leading-[140%] tracking-[-0.02em] text-[#111111] text-center max-w-full px-4">
+            안녕하세요
+            <br />
+            이마루한입니다.
+          </h2>
+        </div>
+
+        <section className="w-full px-5 py-10 flex flex-col md:flex-row md:justify-center items-center gap-2.5">
+          <button
+            onClick={handleClick}
+            disabled={isLoading}
+            className="w-full md:w-[335px] h-12 lg:h-[60px] bg-[#111111] rounded-xl flex items-center justify-center px-3 gap-1.5 disabled:opacity-70"
+          >
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                <span className="text-base lg:text-2xl font-semibold leading-[148%] tracking-[-0.02em] text-white text-center">
+                  로딩중...
+                </span>
+              </>
+            ) : (
+              <span className="text-base lg:text-2xl font-semibold leading-[148%] tracking-[-0.02em] text-white text-center">
+                다음
+              </span>
+            )}
+          </button>
+        </section>
+      </div>
+    </main>
+  );
+}
+
