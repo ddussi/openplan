@@ -1,37 +1,46 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { usePhotoStore, usePhotoQuery, useThrottle } from '@repo/shared';
+import { usePhotoStore, usePhotoQuery, useDebounce } from '@repo/shared';
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 
 export function HomeContainer() {
   const router = useRouter();
   const { setPhoto, hasViewed, photo } = usePhotoStore();
-  const [isClicked, setIsClicked] = useState(false);
-  const { data, refetch, isFetching } = usePhotoQuery();
+  const [clickCount, setClickCount] = useState(0);
+  const { refetch, isFetching } = usePhotoQuery();
+  
+  const debouncedClickCount = useDebounce(clickCount, 500);
 
   // 이미 조회 이력이 있고 데이터가 있으면 자동으로 /result로 이동
   useEffect(() => {
-    if (hasViewed && photo && !isClicked) {
+    if (hasViewed && photo && clickCount === 0) {
       router.push('/result');
     }
-  }, [hasViewed, photo, isClicked, router]);
+  }, [hasViewed, photo, clickCount, router]);
 
-  const handleClick = useThrottle(async () => {
-    setIsClicked(true);
-
-    const result = await refetch();
-
-    if (result.data) {
-      setPhoto(result.data);
-      setTimeout(() => {
-        router.push('/result');
-      }, 300);
+  // 디바운스된 클릭 실행
+  useEffect(() => {
+    if (debouncedClickCount > 0) {
+      const fetchData = async () => {
+        const result = await refetch();
+        if (result.data) {
+          setPhoto(result.data);
+          setTimeout(() => {
+            router.push('/result');
+          }, 300);
+        }
+      };
+      fetchData();
     }
-  }, 1000);
+  }, [debouncedClickCount, refetch, setPhoto, router]);
 
-  const isLoading = isFetching || isClicked;
+  const handleClick = () => {
+    setClickCount((prev) => prev + 1);
+  };
+
+  const isLoading = isFetching || (clickCount > 0 && clickCount !== debouncedClickCount);
 
   return (
     <main className="min-h-screen bg-[#FAFAFA]">
