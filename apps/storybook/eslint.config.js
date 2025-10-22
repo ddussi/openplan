@@ -1,4 +1,9 @@
-import baseConfig from '@repo/eslint-config/library.js';
+import { config } from '@repo/eslint-config/react-internal';
 
-export default [...baseConfig];
+export default [
+  ...config,
+  {
+    ignores: ['node_modules/**', '.storybook/**', 'storybook-static/**'],
+  },
+];
 
