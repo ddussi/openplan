@@ -7,6 +7,10 @@ interface InfoSectionProps {
 }
 
 function InfoSection({ label, value, isLink = false }: InfoSectionProps) {
+  const displayValue = typeof value === 'number' 
+    ? value.toLocaleString('ko-KR') 
+    : value;
+
   return (
     <div className="flex-1">
       <div className="text-[15px] font-medium leading-[140%] tracking-[-0.02em] text-[#111111]">
@@ -19,11 +23,11 @@ function InfoSection({ label, value, isLink = false }: InfoSectionProps) {
           rel="noopener noreferrer"
           className="text-[15px] font-medium leading-[140%] tracking-[-0.02em] text-[#111111] opacity-50 underline break-all"
         >
-          {value}
+          {displayValue}
         </a>
       ) : (
         <div className="text-[15px] font-medium leading-[140%] tracking-[-0.02em] text-[#111111] opacity-50">
-          {value}
+          {displayValue}
         </div>
       )}
     </div>
