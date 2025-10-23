@@ -60,33 +60,34 @@ export function ResultContainer() {
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header name="이마루한" variant="dark" />
 
-        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-10 px-5 py-10">
+        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-10 px-5 lg:px-0 py-10">
           {/* Image */}
-          <div className="w-full max-w-[335px] md:max-w-[728px] lg:max-w-[660px]">
+          <div className="w-full max-w-[335px] md:max-w-[728px] lg:w-[700px] lg:h-[485px] lg:px-5">
             {isLoading ? (
-              <Skeleton className="w-full aspect-[16/10] rounded-3xl" />
+              <Skeleton className="w-full aspect-[660/440] rounded-3xl" />
             ) : (
-              <Image
-                src={photo.download_url}
-                alt={`Photo by ${photo.author}`}
-                width={photo.width}
-                height={photo.height}
-                className="w-full h-auto rounded-3xl"
-                priority
-              />
+              <div className="relative w-full aspect-[660/440] rounded-3xl overflow-hidden">
+                <Image
+                  src={photo.download_url}
+                  alt={`Photo by ${photo.author}`}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
             )}
           </div>
 
           {/* Info sections */}
           {isLoading ? (
-            <div className="w-full max-w-[335px] md:max-w-[728px] lg:max-w-[660px] flex flex-col gap-3">
+            <div className="w-full max-w-[335px] md:max-w-[728px] lg:w-[700px] lg:px-5 flex flex-col gap-3">
               <InfoCardSkeleton />
               <InfoCardSkeleton />
               <InfoCardSkeleton />
               <Skeleton className="w-full md:w-[154px] h-12 self-center" />
             </div>
           ) : (
-            <div className="w-full max-w-[335px] md:max-w-[728px] lg:max-w-[660px] flex flex-col gap-3">
+            <div className="w-full max-w-[335px] md:max-w-[728px] lg:w-[700px] lg:px-5 flex flex-col gap-3">
               <PhotoInfo photo={photo} />
 
               <button
