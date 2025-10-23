@@ -40,7 +40,7 @@ export function HomePage({ name, isLoading, isFetching, error, onNext, onRetry }
           </h2>
         </div>
 
-        <section className="w-full px-5 py-10 flex flex-col md:flex-row md:justify-center items-center gap-2.5">
+        <section className="w-full px-5 py-10 flex flex-col md:flex-row md:justify-center items-start md:items-center gap-2.5">
           <button
             onClick={onNext}
             disabled={isFetching}

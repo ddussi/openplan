@@ -83,7 +83,7 @@ export function ResultContainer() {
               <InfoCardSkeleton />
               <InfoCardSkeleton />
               <InfoCardSkeleton />
-              <Skeleton className="w-full md:w-[154px] h-12" />
+              <Skeleton className="w-full md:w-[154px] h-12 self-center" />
             </div>
           ) : (
             <div className="w-full max-w-[335px] md:max-w-[728px] lg:max-w-[660px] flex flex-col gap-3">
@@ -92,7 +92,7 @@ export function ResultContainer() {
               <button
                 onClick={handleCancel}
                 aria-label="이전 페이지로 돌아가기"
-                className="w-full md:w-[154px] h-12 bg-[#111111] rounded-xl flex items-center justify-center px-3 gap-1.5 md:self-start hover:bg-[#333333] transition-colors"
+                className="w-full md:w-[154px] h-12 bg-[#111111] rounded-xl flex items-center justify-center px-3 gap-1.5 self-center hover:bg-[#333333] transition-colors"
               >
                 <span className="text-base font-semibold leading-[148%] tracking-[-0.02em] text-white text-center">
                   이전
