@@ -80,6 +80,8 @@ export function HomeContainer() {
           <button
             onClick={handleClick}
             disabled={isFetching}
+            aria-label={isLoading ? '사진을 불러오는 중입니다' : '다음 사진 보기'}
+            aria-busy={isLoading}
             className="w-full md:w-[335px] h-12 lg:h-[60px] bg-[#111111] rounded-xl flex items-center justify-center px-3 gap-1.5 disabled:opacity-70"
           >
             {isLoading ? (

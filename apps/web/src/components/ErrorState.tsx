@@ -27,6 +27,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
       {onRetry && (
         <button
           onClick={onRetry}
+          aria-label="사진 다시 불러오기"
           className="px-6 py-2 bg-[#111111] text-white rounded-xl font-semibold hover:bg-[#333333] transition-colors"
         >
           다시 시도
