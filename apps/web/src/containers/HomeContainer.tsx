@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 import { usePhotoStore, usePhotoQuery, useDebounce } from '@repo/shared';
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
+import { ErrorState } from '@/components/ErrorState';
 
 export function HomeContainer() {
   const router = useRouter();
   const { setPhoto, hasViewed, photo } = usePhotoStore();
   const [clickCount, setClickCount] = useState(0);
-  const { refetch, isFetching } = usePhotoQuery();
+  const { refetch, isFetching, error } = usePhotoQuery();
   
   const debouncedClickCount = useDebounce(clickCount, 500);
 
@@ -27,9 +28,7 @@ export function HomeContainer() {
         const result = await refetch();
         if (result.data) {
           setPhoto(result.data);
-          setTimeout(() => {
-            router.push('/result');
-          }, 300);
+          router.push('/result');
         }
       };
       fetchData();
@@ -40,7 +39,29 @@ export function HomeContainer() {
     setClickCount((prev) => prev + 1);
   };
 
-  const isLoading = isFetching || (clickCount > 0 && clickCount !== debouncedClickCount);
+  const handleRetry = () => {
+    setClickCount(0);
+    refetch();
+  };
+
+  // 디바운스 중이거나 API 호출 중일 때만 로딩
+  const isDebouncing = clickCount > 0 && clickCount !== debouncedClickCount;
+  const isLoading = isDebouncing || isFetching;
+
+  // 에러 상태 처리
+  if (error) {
+    return (
+      <main className="min-h-screen bg-[#FAFAFA]">
+        <Header name="이마루한" variant="light" />
+        <div className="flex items-center justify-center min-h-[calc(100vh-52px)]">
+          <ErrorState
+            message="사진을 불러올 수 없습니다. 네트워크 연결을 확인해주세요."
+            onRetry={handleRetry}
+          />
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#FAFAFA]">
@@ -58,7 +79,7 @@ export function HomeContainer() {
         <section className="w-full px-5 py-10 flex flex-col md:flex-row md:justify-center items-center gap-2.5">
           <button
             onClick={handleClick}
-            disabled={isLoading}
+            disabled={isFetching}
             className="w-full md:w-[335px] h-12 lg:h-[60px] bg-[#111111] rounded-xl flex items-center justify-center px-3 gap-1.5 disabled:opacity-70"
           >
             {isLoading ? (

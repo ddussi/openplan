@@ -21,6 +21,7 @@ export const usePhotoQuery = (): UseQueryResult<PhotoData, Error> => {
   return useQuery({
     queryKey: ['photo'],
     queryFn: photoService.fetchPhoto,
+    enabled: false, // 자동 호출 비활성화 (버튼 클릭 시에만 refetch로 호출)
     staleTime: 1000 * 60 * 5, // 5분
     gcTime: 1000 * 60 * 10, // 10분
     retry: 2,
