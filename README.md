@@ -30,6 +30,9 @@ pnpm dev
 # Storybook (localhost:6006)
 pnpm dev --filter=storybook
 
+# 테스트 실행
+pnpm test
+
 # 빌드
 pnpm build
 ```
@@ -68,12 +71,19 @@ openplan/
 ### 2. 상태 유지
 - 새로고침해도 데이터 유지 (localStorage)
 - Zustand로 전역 상태 관리
+- 조회 이력이 있으면 자동으로 결과 페이지로 이동
 
-### 3. 페이지 이동
-- 조회 후 자동으로 결과 페이지 이동
-- 조회 안했으면 메인 페이지로 돌아가기
+### 3. 에러 처리
+- API 호출 실패 시 에러 메시지 표시
+- "다시 시도" 버튼으로 재요청 가능
+- 사용자 친화적인 에러 UI 제공
 
-### 4. 반응형
+### 4. 접근성 지원
+- 버튼에 `aria-label` 적용 (스크린 리더 지원)
+- 로딩 상태 `aria-busy` 속성으로 안내
+- 키보드 내비게이션 지원
+
+### 5. 반응형
 - 모바일, 태블릿, 데스크톱 지원
 
 ---
@@ -116,7 +126,24 @@ function PhotoInfo({ photo }) {
 
 ---
 
-## 테스트 방법
+## 테스트
+
+### 단위 테스트 실행
+```bash
+# 전체 테스트
+pnpm test
+
+# watch 모드
+pnpm test --filter=@repo/shared -- --watch
+```
+
+**테스트 대상:**
+- `useDebounce` 훅: 디바운스 로직 검증
+- `photoStore`: Zustand 상태 관리 검증
+
+---
+
+## 사용 방법
 
 ### 기본 동작 확인
 1. 메인 페이지에서 "다음" 버튼 클릭
@@ -126,11 +153,15 @@ function PhotoInfo({ photo }) {
 5. "이전" 버튼으로 메인 이동
 6. 새로고침해도 데이터 유지되는지 확인
 
+### 에러 처리 확인
+1. API 오류 발생 시 에러 메시지 표시
+2. "다시 시도" 버튼으로 재요청
+
 ### Storybook 확인
 ```bash
 pnpm dev --filter=storybook
 ```
-Button 컴포넌트의 다양한 스타일 확인
+Button 컴포넌트의 다양한 상태 확인
 
 ---
 
